@@ -1,0 +1,53 @@
+// ==UserScript==
+// @name         Torn Pickpocketing Colors
+// @version      0.1
+// @namespace    https://github.com/Korbrm
+// @description  Color codes crimes based on difficulty
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=torn.com
+// @author       Korbrm [2931507]
+// @license      MIT License
+// @match        https://www.torn.com/loader.php?sid=crimes*
+// @grant        none
+// ==/UserScript==
+ 
+(function() {
+    'use strict';
+ 
+    const categoryColorMap = {
+        "Safe": "#37b24d",
+        "Moderately Unsafe": "#74b816",
+        "Unsafe": "#f59f00",
+        "Risky": "#f76707",
+        "Dangerous": "#f03e3e",
+        "Very Dangerous": "#7048e8",
+    };
+ 
+    const markGroups = {
+        "Safe": ["Drunk man", "Drunk woman", "Homeless person", "Junkie", "Elderly man", "Elderly woman"],
+        "Moderately Unsafe": ["Classy lady", "Laborer", "Postal worker", "Young man", "Young woman", "Student"],
+        "Unsafe": ["Rich kid", "Sex worker", "Thug"],
+        "Risky": ["Jogger", "Businessman", "Businesswoman", "Gang member", "Mobster"],
+        "Dangerous": ["Cyclist"],
+        "Very Dangerous": ["Police officer"],
+    };
+ 
+    function updateDivColors() {
+        const url = window.location.href;
+        if (!url.includes("#/pickpocketing")){
+            return;
+        }
+        const divElements = document.querySelectorAll('.titleAndProps___DdeVu');
+        divElements.forEach(divElement => {
+            const text = divElement.querySelector('div').textContent.trim();
+            for (const category in markGroups) {
+                if (markGroups[category].includes(text)) {
+                    divElement.querySelector('div').style.color = categoryColorMap[category];
+                    divElement.querySelector('div').textContent = `${text} (${category})`;
+                    break;
+                }
+            }
+        });
+    }
+ 
+    updateDivColors();
+    setInterval(updateDivColors, 1000);
